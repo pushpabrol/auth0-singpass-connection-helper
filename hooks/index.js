@@ -11,7 +11,7 @@ function validateJwt(path) {
     if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
       var token = req.headers.authorization.split(' ')[1];
       var isValid = jwt.verify(token, req.webtaskContext.data.EXTENSION_SECRET, {
-        audience: `${req.webtaskContext.data.WT_URL}/${path}`,
+        audience: `${req.webtaskContext.data.WT_URL}${path}`,
         issuer: 'https://' + req.webtaskContext.data.AUTH0_DOMAIN
       });
 
