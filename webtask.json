@@ -1,12 +1,14 @@
 {
   "title": "Auth0 Singpass Connection Helper",
   "name": "auth0-singpass-connection-extension",
-  "version": "1.11.0",
+  "version": "1.2.0",
   "author": "Pushp Abrol",
   "useHashName": false,
   "description": "singpass token wrapper and other endpoints to support private key jwt / client assertion",
   "type": "application",
   "logoUrl": "https://app.singpass.gov.sg/static/og_image.png",
+  "initialUrlPath": "/",
+  "repository": "https://github.com/pushpabrol/auth0-singpass-connection-helper",
   "keywords": [
     "auth0",
     "extension",
@@ -14,7 +16,7 @@
   ],
   "auth0": {
     "createClient": true,
-    "scopes": "create:connections read:connections delete:connections",
+    "scopes": "create:connections read:connections delete:connections update:connections",
     "onInstallPath": "/.extensions/on-install",
     "onUninstallPath": "/.extensions/on-uninstall",
     "onUpdatePath": "/.extensions/on-update"
@@ -23,11 +25,13 @@
     "IDP_DOMAIN": {
       "description": "The domain for your IDP",
       "example": "stg-id.singpass.gov.sg",
-      "required": true
+      "required": true,
+      "default" : "login.pushp.me"
     },
     "IDP_CLIENT_ID": {
       "description": "Client ID from your IDP",
       "example": "client_pkce_pk_jwt_ES256",
+      "default": "client_pkce_pk_jwt_ES256",
       "required": true
     },
     "RELYING_PARTY_KID": {
