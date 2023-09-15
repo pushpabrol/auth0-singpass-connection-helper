@@ -1,13 +1,12 @@
 {
   "title": "Auth0 Singpass Connection Helper",
   "name": "auth0-singpass-connection-extension",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "author": "Pushp Abrol",
   "useHashName": false,
   "description": "singpass token wrapper and other endpoints to support private key jwt / client assertion",
   "type": "application",
   "logoUrl": "https://app.singpass.gov.sg/static/og_image.png",
-  "initialUrlPath": "/",
   "repository": "https://github.com/pushpabrol/auth0-singpass-connection-helper",
   "keywords": [
     "auth0",
