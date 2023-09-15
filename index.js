@@ -37,7 +37,7 @@ app.get('/jwks', async (req, res) => {
   res.json(intermediaryJWKS);
 });
 
-app.get('/meta', cors(), async (req, res) => {
+app.get('/meta', async (req, res) => {
   res.status(200).send(metadata)
 });
 
