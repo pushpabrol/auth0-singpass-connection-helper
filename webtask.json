@@ -1,7 +1,7 @@
 {
   "title": "Auth0 Singpass Connection Helper",
   "name": "auth0-singpass-connection-extension",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "author": "Pushp Abrol",
   "useHashName": false,
   "description": "singpass token wrapper and other endpoints to support private key jwt / client assertion",
@@ -71,11 +71,6 @@
           "text": "ES256"
         }
       ]
-    },
-    "INTERMEDIARY_PRIVATE_KEY": {
-      "description": "INTERMEDIARY PRIVATE KEY(internal processing)",
-      "default": "",
-      "required": true
     },
     "INTERMEDIARY_KEY_KID": {
       "description": "Key for Intermediary signing key",
