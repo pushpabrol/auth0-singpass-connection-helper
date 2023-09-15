@@ -1,7 +1,7 @@
 {
   "title": "Auth0 Singpass Connection Helper",
   "name": "auth0-singpass-connection-extension",
-  "version": "1.9.0",
+  "version": "2.0.0",
   "author": "Pushp Abrol",
   "useHashName": false,
   "description": "singpass token wrapper and other endpoints to support private key jwt / client assertion",
@@ -25,28 +25,36 @@
       "description": "The domain for your IDP",
       "example": "stg-id.singpass.gov.sg",
       "required": true,
-      "default" : "login.pushp.me"
+      "default" : "login.pushp.me",
+      "type": "text"
     },
     "IDP_CLIENT_ID": {
       "description": "Client ID from your IDP",
       "example": "client_pkce_pk_jwt_ES256",
       "default": "client_pkce_pk_jwt_ES256",
-      "required": true
+      "required": true,
+      "type": "text"
+
     },
     "RELYING_PARTY_KID": {
       "default": "Al93ssyWpZ2yOoLxbDohuTigc1i5XNt1PKMyvU8aVgY",
       "description": "Relying Party KID",
-      "required": true
+      "required": true,
+      "type": "text"
+
     },
     "RELYING_PARTY_PRIVATE_KEY_SIGNING": {
       "default": "Fc5okytOO6sHmxFw0YPIT4qE7ojv7V-2nuvr9KhEKy8",
       "description": "RELYING_PARTY_PRIVATE_KEY for SIGNING",
-      "required": true
+      "required": true,
+      "type": "text"
+
     },
     "RELYING_PARTY_PRIVATE_KEY_ENC": {
       "default": "JzbVVPBsdmtNRyAKizBd6z5pLy3sZapAfwJwDNWmQbM",
       "description": "RELYING_PARTY_PRIVATE_KEY for ENCRYPTION",
-      "required": true
+      "required": true,
+      "type": "text"
     },
     "RELYING_PARTY_PRIVATE_KEY_ENC_ALG": {
       "description": "Algorithm for RELYING_PARTY_PRIVATE_KEY_ENC",
@@ -74,12 +82,16 @@
     },
     "INTERMEDIARY_PRIVATE_KEY" : {
       "description": "Intermediary signing key(RS256 & used within the connection)",
-      "required": true
+      "required": true,
+      "type": "text"
+
 
     },
     "INTERMEDIARY_KEY_KID": {
       "description": "Key for Intermediary signing key",
-      "required": true
+      "required": true,
+      "type": "text"
+
     },
     "INTERMEDIARY_SIGNING_ALG": {
       "description": "Intermediary Signing key's Algorithm",
