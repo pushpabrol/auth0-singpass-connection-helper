@@ -1,7 +1,7 @@
 {
   "title": "Auth0 Singpass Connection Helper",
   "name": "auth0-singpass-connection-extension",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "author": "Auth0",
   "useHashName": false,
   "description": "singpass token wrapper and other endpoints to support private key jwt / client assertion",
@@ -14,12 +14,6 @@
     "extension",
     "singpass"
   ],
-  "auth0": {
-    "createClient": false,
-    "onUninstallPath": "/.extensions/on-uninstall",
-    "onInstallPath": "/.extensions/on-install",
-    "onUpdatePath": "/.extensions/on-update"
-  },
   "secrets": {
     "IDP_DOMAIN": {
       "description": "The domain for your IDP",
