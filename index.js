@@ -1,147 +1,213 @@
-var express = require('express');
 var Webtask = require('webtask-tools');
-var bodyParser = require('body-parser');
-const { SignJWT } = require('jose/dist/node/cjs/jwt/sign');
-const { parseJwk } = require('jose/dist/node/cjs/jwk/parse');
-const { jwtVerify } = require('jose/dist/node/cjs/jwt/verify');
-const crypto = require("crypto");
-const uuid = require("uuid");
-const axios = require("axios").default;
-const qs = require('qs');
-var app = express();
+const express = require('express');
+const relyingPartyJWKS = require('./spkis/relyingPartyJWKS.json');
+const intermediaryJWKS = require('./spkis/intermediaryJWKS.json');
+const { JWK, JWE } = require('node-jose');
+const { SignJWT, importJWK, importPKCS8, jwtVerify, createRemoteJWKSet } = require('jose'); 
+const axios = require('axios');
+const uuid = require('uuid');
+const qs = require('querystring');
+const dotenv = require('dotenv');
+dotenv.config();
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+const app = express(); // Create an Express application
 
-app.get('/.well-known/openid-configuration', (req, res) => {
-    const wtUrl = `https://${req.headers.host}/auth0-singpass-extension`;
-    res.status(200).send({
-        "authorization_endpoint": `${wtUrl}/authorize`,
-        "token_endpoint": `${wtUrl}/token`
-    });
-});
-app.get('/authorize', (req, res) => {
-    const context = req.webtaskContext;
-    if (!req.query.client_id) {
-        return res.send(400, 'missing client_id');
-    }
-    if (context.data.AUTH0_CLIENT_ID !== req.query.client_id) {
-        return res.send(401, 'invalid client_id');
-    }
-    var url = `https://${context.data.AUTH0_CUSTOM_DOMAIN}${req.url}&ndi_state=${req.query.state}&ndi_nonce=${req.query.code_challenge}&singpass=true`;
-    res.redirect(url);
+// Middleware to parse JSON request bodies
+app.use(express.json());
+
+// Middleware to parse URL-encoded request bodies
+app.use(express.urlencoded({ extended: true }));
+
+// Create a route for /.well-known/keys
+// Used by the relying party of IDP to provide an ES256 public key for client authentication
+app.get('/.well-known/keys', async (req, res) => {
+  res.json(relyingPartyJWKS);
 });
 
-app.post('/token', async function (req, res) {
-    const context = req.webtaskContext;
-    const { client_id, client_secret, code, code_verifier, redirect_uri } = req.body;
-    if (!client_id || !client_secret) {
-        return res.send(400, 'missing client_id / client_secret');
+// This route returns the RS256 public key, used as the JWKS URL by auth0 to verify RS256 tokens
+app.get('/jwks', async (req, res) => {
+  res.json(intermediaryJWKS);
+});
+
+// Start the Express server and listen on the specified port
+module.exports = Webtask.fromExpress(app);
+
+// Start the Express server and listen on the specified port
+app.post('/token', async (req, res) => {
+    const context = req.webtaskContext ? req.webtaskContext.data : process.env;
+    console.log(req.body);
+  
+    // Retrieve parameters from the request body
+    const { client_id, code, code_verifier, redirect_uri } = req.body;
+  
+    // Check if the client_id is missing
+    if (!client_id) {
+      return res.status(400).send('Missing client_id');
     }
-    if (context.data.AUTH0_CLIENT_ID === client_id && context.data.AUTH0_CLIENT_SECRET === client_secret) {
-        const client_assertion = await generatePrivateKeyJWT(context.data);
-        var options = {
-            method: 'POST',
-            url: `${context.data.SINGPASS_ENVIRONMENT}/token`,
-            headers: { 'content-type': 'application/x-www-form-urlencoded' },
-            data: qs.stringify({
-                grant_type: 'authorization_code',
-                client_id: context.data.SINGPASS_CLIENT_ID,
-                client_assertion_type: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
-                client_assertion: client_assertion,
-                code: code,
-                redirect_uri: redirect_uri
-            })
+  
+    // Check if the provided client_id matches the expected one
+    if (context.IDP_CLIENT_ID === client_id) {
+      try {
+        // Generate a client_assertion (JWT) for client authentication
+        const client_assertion = await generatePrivateKeyJWTForClientAssertion(context);
+        console.log(client_assertion);
+  
+        // Prepare the request to exchange the authorization code for tokens
+        const options = {
+          method: 'POST',
+          url: `https://${context.IDP_DOMAIN}/token`,
+          headers: { 'content-type': 'application/x-www-form-urlencoded' },
+          data: qs.stringify({
+            grant_type: 'authorization_code',
+            client_id: context.IDP_CLIENT_ID,
+            client_assertion_type: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+            client_assertion,
+            code,
+            code_verifier,
+            redirect_uri,
+          }),
         };
-        try {
-            const response = await axios.request(options);
-            const { id_token } = response.data;
-            const publicKey = await loadPublicKey(context.data);
-            const code_v = new TextEncoder().encode(code_verifier);
-            const code_v_s256 = crypto.createHash('sha256').update(code_v).digest('base64').replace(/\//g, '_').replace(/\+/g, '-').replace(/=/g, '');
-            console.log(`nonce expected: ${code_v_s256}`);
-            const { payload, protectedHeader } = await jwtVerify(id_token, publicKey, {
-                issuer: context.data.ISSUER,
-                audience: context.data.CLIENT_ID,
-            });
-            if (payload.nonce !== code_v_s256) {
-                return res.send(400, 'nonce mismatch');
-            } else {
-                response.data.payload = payload;
-                return res.status(200).send(response.data);
-            }
-
-        } catch (error) {
-            if (error.response) {
-                return res.status(error.response.status).send(error.response.data);
-            } else {
-                // Something happened in setting up the request that triggered an Error
-                console.log('Error', error.message);
-                return res.status(500).send(error);
-            }
-        }
-    } else {
-        return res.send(401, 'invalid request');
-    }
-});
-
-app.post('/verify', async function (req, res) {
-    try {
-        const { id_token } = response.body;
-        if (!id_token) {
-            return res.status(400).send('ID_TOKEN required');
-        }
-        const publicKey = await loadPublicKey(context.data);
-        const { payload, protectedHeader } = await jwtVerify(id_token, publicKey, {
-            issuer: context.data.ISSUER,
-            audience: context.data.CLIENT_ID
-        })
-        return res.status(200).send(payload);
-    } catch (error) {
+  
+        // Send the token request to the authorization server
+        const response = await axios.request(options);
+        console.log(response.data);
+  
+        // Extract the id_token from the response
+        const { id_token } = response.data;
+  
+        // Extract the id_token from the response
+        const decryted_id_token = await decryptJWE(id_token, context);
+  
+        const publicKeyIDP = createRemoteJWKSet(new URL(`https://${context.IDP_DOMAIN}/jwks`))
+  
+        // Verify the id_token with the public key
+        const { payload, protectedHeader } = await jwtVerify(decryted_id_token, publicKeyIDP, {
+          issuer: `https://${context.IDP_DOMAIN}`,
+          audience: context.IDP_CLIENT_ID,
+        });
+  
+        console.log(payload);
+        console.log(protectedHeader);
+        // Remove the nonce from the payload and replace the id_token with a new RS256 token
+        if (payload.nonce) delete payload.nonce;
+        response.data.payload = payload;
+        delete response.data.id_token;
+  
+        // Generate an RS256 token from the payload for auth0
+        const jwt = await generateRS256Token(payload, context);
+        response.data.id_token = jwt;
+  
+        // Send the response with the updated id_token
+        return res.status(200).send(response.data);
+  
+      } catch (error) {
         if (error.response) {
-            return res.status(error.response.status).send(error.response.data);
+          // Handle errors with HTTP responses
+          return res.status(error.response.status).send(error.response.data);
         } else {
-            // Something happened in setting up the request that triggered an Error
-            console.log('Error', error.message);
-            return res.status(500).send(error);
+          console.error('Error:', error.message);
+          return res.status(500).send(error.message);
         }
+      }
+    } else {
+      // Return an error response for invalid client_id
+      return res.status(401).send('Invalid request, client_id is incorrect!');
     }
-})
-async function loadPrivateKey(config) {
+  });
+  
+  
+  // Function to load the private key for client_assertion - ES256
+  async function loadPrivateKeyForClientAssertion(context) {
     try {
-        const response = await axios.get(config.RELYING_PARTY_JWKS_ENDPOINT);
-        const { keys } = response.data;
-        keys[0].d = config.RELYING_PARTY_PRIVATE_KEY;
-        return await parseJwk(keys[0], config.SINGPASS_SIGNING_ALG);;
+  
+      var jsonData = relyingPartyJWKS.keys.find(spki => spki.use === "sig");
+      jsonData.d = context.RELYING_PARTY_PRIVATE_KEY_SIGNING;
+      return await importJWK(jsonData, context.RELYING_PARTY_CLIENT_ASSERTION_SIGNING_ALG);
     } catch (e) {
-        return e;
+      return e;
     }
-};
-
-async function loadPublicKey(config) {
+  }
+  
+  // Function to load the RS256 private key
+  async function loadRS256PrivateKey(context) {
     try {
-        const response = await axios.get(`${config.SINGPASS_ENVIRONMENT}/.well-known/keys`);
-        const publicKey = await parseJwk(response.data.keys[0], config.SINGPASS_SIGNING_ALG);
-        return publicKey;
+      var privateKey = context.INTERMEDIARY_PRIVATE_KEY.replace(/\n/g, "\r\n");
+      var key = await importPKCS8(privateKey, context.INTERMEDIARY_SIGNING_ALG);
+      return key;
     } catch (e) {
-        return e;
+      console.log(e);
+      return e;
     }
-};
-
-async function generatePrivateKeyJWT(config) {
-    //const privateKeyPEM = crypto.createPrivateKey(config.PRIVATE_KEY.replace(/\\n/gm, '\n'));
-    const key = await loadPrivateKey(config);
-    const jwt = await new SignJWT({})
-        .setProtectedHeader({ alg: config.SINGPASS_SIGNING_ALG, kid: config.RELYING_PARTY_KID, typ: "JWT" })
+  }
+  
+  
+  
+  // Function to generate a client_assertion (JWT) for client authentication
+  async function generatePrivateKeyJWTForClientAssertion(context) {
+    try {
+      const key = await loadPrivateKeyForClientAssertion(context);
+      console.log(key);
+      const jwt = await new SignJWT({})
+        .setProtectedHeader({ alg: context.RELYING_PARTY_CLIENT_ASSERTION_SIGNING_ALG, kid: context.RELYING_PARTY_KID, typ: "JWT" })
         .setIssuedAt()
-        .setIssuer(config.SINGPASS_CLIENT_ID)
-        .setSubject(config.SINGPASS_CLIENT_ID)
-        .setAudience(config.SINGPASS_ENVIRONMENT)
-        .setExpirationTime('2m') //The expiration time on or after which the JWT MUST NOT be accepted by NDI for processing. Additionally, NDI will not accept tokens with an exp longer than 2 minutes since iat. https://tools.ietf.org/html/rfc7519#section-4.1.4
+        .setIssuer(context.IDP_CLIENT_ID)
+        .setSubject(context.IDP_CLIENT_ID)
+        .setAudience([`https://${context.IDP_DOMAIN}/`, `https://${context.IDP_DOMAIN}/token`])
+        .setExpirationTime('2m') // Expiration time
         .setJti(uuid.v4())
         .sign(key);
-    return jwt;
-}
-
-
-module.exports = Webtask.fromExpress(app);
+      console.log(jwt);
+      return jwt;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
+  
+  // Function to generate an RS256 token by the intermediary
+  async function generateRS256Token(payload, context) {
+    if (payload.nonce) delete payload.nonce;
+    try {
+      const key = await loadRS256PrivateKey(context);
+      console.log(key);
+      const jwt = await new SignJWT(payload)
+        .setProtectedHeader({ alg: context.INTERMEDIARY_SIGNING_ALG, kid: context.INTERMEDIARY_KEY_KID, typ: "JWT" })
+        .setIssuedAt()
+        .setIssuer(`https://${context.IDP_DOMAIN}`)
+        .setAudience(context.IDP_CLIENT_ID)
+        .setExpirationTime('2m') // Expiration time
+        .setJti(uuid.v4())
+        .sign(key);
+      console.log(jwt);
+      return jwt;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
+  
+  async function decryptJWE(jwe, context) {
+  
+    var jsonData = relyingPartyJWKS.keys.find(spki => spki.use === "enc" && spki.alg === context.RELYING_PARTY_PRIVATE_KEY_ENC_ALG);
+    if (jsonData) {
+      jsonData.d = context.RELYING_PARTY_PRIVATE_KEY_ENC;
+      try {
+  
+        const decryptor = JWE.createDecrypt(await JWK.asKey(jsonData, "json"));
+        const decryptedData = await decryptor.decrypt(jwe);
+        const idToken = decryptedData.plaintext.toString('utf8');
+        console.log(idToken);
+        return idToken;
+      }
+  
+      catch (e) {
+        console.log(e);
+        throw e;
+      }
+    } else {
+      console.log("Either not encrypted or the right key is not available!, returning token as is!")
+      return jwe;
+    }
+  
+  }
+  

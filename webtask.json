@@ -1,10 +1,10 @@
 {
-    "title": "Auth0 Singpass Proxy Extension",
-    "name": "auth0-singpass-extension",
+    "title": "Auth0 Singpass Connection Extension",
+    "name": "auth0-singpass-connection-extension",
     "version": "1.1.1",
     "author": "Auth0",
     "useHashName": false,
-    "description": "singpass proxy endpoint to support private key jwt / client assertion",
+    "description": "singpass token wrapper and other endpoints to support private key jwt / client assertion",
     "type": "application",
     "category": "end_user",
     "logoUrl": "https://app.singpass.gov.sg/static/og_image.png",
