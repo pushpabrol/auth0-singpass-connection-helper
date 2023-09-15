@@ -15,6 +15,11 @@
     "singpass"
   ],
   "auth0": {
+    "createClient": true,
+    "scopes": "create:connections read:connections delete:connections",
+    "onInstallPath": "/.extensions/on-install",
+    "onUninstallPath": "/.extensions/on-uninstall",
+    "onUpdatePath": "/.extensions/on-update"
   },
   "secrets": {
     "IDP_DOMAIN": {

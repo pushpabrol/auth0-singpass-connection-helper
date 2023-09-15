@@ -21,7 +21,7 @@ app.use(express.json());
 // Middleware to parse URL-encoded request bodies
 app.use(express.urlencoded({ extended: true }));
 
-
+app.use('/.extensions', require('./hooks'));
 
 // Create a route for /.well-known/keys
 // Used by the relying party of IDP to provide an ES256 public key for client authentication
