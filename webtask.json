@@ -1,7 +1,7 @@
 {
   "title": "Auth0 Singpass Connection Helper",
   "name": "auth0-singpass-connection-extension",
-  "version": "2.7.0",
+  "version": "2.8.0",
   "author": "auth0",
   "useHashName": false,
   "description": "singpass token wrapper and other endpoints to support private key jwt / client assertion",
@@ -31,27 +31,26 @@
     "IDP_CLIENT_ID": {
       "description": "Client ID from your IDP",
       "example": "client_pkce_pk_jwt_ES256",
-      "default": "client_pkce_pk_jwt_ES256",
       "required": true,
       "type": "text"
 
     },
     "RELYING_PARTY_KID": {
-      "default": "Al93ssyWpZ2yOoLxbDohuTigc1i5XNt1PKMyvU8aVgY",
+      "example": "Al93ssyWpZ2yOoLxbDohuTigc1i5XNt1PKMyvU8aVgY",
       "description": "Relying Party KID",
       "required": true,
       "type": "text"
 
     },
     "RELYING_PARTY_PRIVATE_KEY_SIGNING": {
-      "default": "Fc5okytOO6sHmxFw0YPIT4qE7ojv7V-2nuvr9KhEKy8",
+      "example": "Fc5okytOO6sHmxFw0YPIT4qE7ojv7V-2nuvr9KhEKy8",
       "description": "RELYING_PARTY_PRIVATE_KEY for SIGNING",
       "required": true,
       "type": "text"
 
     },
     "RELYING_PARTY_PRIVATE_KEY_ENC": {
-      "default": "JzbVVPBsdmtNRyAKizBd6z5pLy3sZapAfwJwDNWmQbM",
+      "example": "JzbVVPBsdmtNRyAKizBd6z5pLy3sZapAfwJwDNWmQbM",
       "description": "RELYING_PARTY_PRIVATE_KEY for ENCRYPTION",
       "required": true,
       "type": "text"
