@@ -1,8 +1,8 @@
 {
   "title": "Auth0 Singpass Connection Helper",
   "name": "auth0-singpass-connection-extension",
-  "version": "2.4.0",
-  "author": "Auth0",
+  "version": "2.5.0",
+  "author": "auth0",
   "useHashName": false,
   "description": "singpass token wrapper and other endpoints to support private key jwt / client assertion",
   "type": "application",
@@ -23,89 +23,8 @@
   "secrets": {
     "IDP_DOMAIN": {
       "description": "The domain for your IDP",
-      "example": "stg-id.singpass.gov.sg",
-      "required": true,
-      "default" : "login.pushp.me",
-      "type": "text"
-    },
-    "IDP_CLIENT_ID": {
-      "description": "Client ID from your IDP",
-      "example": "client_pkce_pk_jwt_ES256",
-      "default": "client_pkce_pk_jwt_ES256",
-      "required": true,
-      "type": "text"
-
-    },
-    "RELYING_PARTY_KID": {
-      "default": "Al93ssyWpZ2yOoLxbDohuTigc1i5XNt1PKMyvU8aVgY",
-      "description": "Relying Party KID",
-      "required": true,
-      "type": "text"
-
-    },
-    "RELYING_PARTY_PRIVATE_KEY_SIGNING": {
-      "default": "Fc5okytOO6sHmxFw0YPIT4qE7ojv7V-2nuvr9KhEKy8",
-      "description": "RELYING_PARTY_PRIVATE_KEY for SIGNING",
-      "required": true,
-      "type": "text"
-
-    },
-    "RELYING_PARTY_PRIVATE_KEY_ENC": {
-      "default": "JzbVVPBsdmtNRyAKizBd6z5pLy3sZapAfwJwDNWmQbM",
-      "description": "RELYING_PARTY_PRIVATE_KEY for ENCRYPTION",
-      "required": true,
-      "type": "text"
-    },
-    "RELYING_PARTY_PRIVATE_KEY_ENC_ALG": {
-      "description": "Algorithm for RELYING_PARTY_PRIVATE_KEY_ENC",
-      "type": "select",
-      "allowMultiple": false,
-      "default": "ECDH-ES+A128KW",
-      "options": [
-        {
-          "value": "ECDH-ES+A128KW",
-          "text": "ECDH-ES+A128KW"
-        }
-      ]
-    },
-    "RELYING_PARTY_CLIENT_ASSERTION_SIGNING_ALG": {
-      "description": "Algorithm for RELYING_PARTY_CLIENT_ASSERTION_SIGNING",
-      "type": "select",
-      "allowMultiple": false,
-      "default": "ES256",
-      "options": [
-        {
-          "value": "ES256",
-          "text": "ES256"
-        }
-      ]
-    },
-    "INTERMEDIARY_PRIVATE_KEY" : {
-      "description": "Intermediary signing key(RS256 & used within the connection)",
-      "required": true,
-      "type": "text"
-
-
-    },
-    "INTERMEDIARY_KEY_KID": {
-      "description": "Key for Intermediary signing key",
-      "required": true,
-      "type": "text"
-
-    },
-    "INTERMEDIARY_SIGNING_ALG": {
-      "description": "Intermediary Signing key's Algorithm",
-      "type": "select",
-      "allowMultiple": false,
-      "default": "RS256",
-      "required": true,
-      "options": [
-        {
-          "value": "RS256",
-          "text": "RS256"
-        }
-      ]
-    }
-    
+      "example": "login.pushp.me",
+      "required": true
+    }    
   }
 }
