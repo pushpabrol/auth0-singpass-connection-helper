@@ -9,15 +9,6 @@ const uuid = require('uuid');
 const qs = require('querystring');
 const dotenv = require('dotenv');
 
-meta = () => {
-  const api = express.Router();
-  api.get('/', (req, res) => {
-    res.status(200).send(metadata);
-  });
-
-  return api;
-};
-
 dotenv.config();
 
 const app = express(); // Create an Express application
@@ -40,6 +31,9 @@ app.get('/jwks', async (req, res) => {
   res.json(intermediaryJWKS);
 });
 
+app.get('/meta', async (req, res) => {
+    res.status(200).send(require('./webtask.json'));
+  });
 
 // Start the Express server and listen on the specified port
 module.exports = Webtask.fromExpress(app);
