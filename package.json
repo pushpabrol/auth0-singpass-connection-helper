@@ -1,6 +1,6 @@
 {
     "name": "auth0-singpass-connection-extension",
-    "version": "1.9.0",
+    "version": "1.10.0",
     "description": "Singpass token wrapper and other endpoints to support private key jwt / client assertion",
     "main": "index.js",
     "scripts": {
@@ -19,6 +19,7 @@
     "dependencies": {
         "auth0": "^3.0.1",
         "axios": "^0.27.2",
+        "cors": "^2.8.1",
         "dotenv": "^16.0.1",
         "express": "^4.17.1",
         "jose": "^4.14.6",
@@ -43,7 +44,8 @@
             "dotenv@16.0.1",
             "superagent@5.3.1",
             "auth0@3.0.1",
-            "jsonwebtoken@9.0.0"
+            "jsonwebtoken@9.0.0",
+            "cors@2.8.1"
         ],
         "excluded": [
             "safe-eval",

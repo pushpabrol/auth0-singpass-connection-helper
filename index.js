@@ -9,6 +9,7 @@ const uuid = require('uuid');
 const qs = require('querystring');
 const dotenv = require('dotenv');
 const metadata = require('./webtask.json');
+const cors = require('cors');
 
 
 dotenv.config();
@@ -34,7 +35,7 @@ app.get('/jwks', async (req, res) => {
   res.json(intermediaryJWKS);
 });
 
-app.get('/meta', async (req, res) => {
+app.get('/meta', cors(), async (req, res) => {
   res.status(200).send(metadata)
 });
 
