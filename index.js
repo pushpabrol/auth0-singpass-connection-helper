@@ -8,7 +8,15 @@ const axios = require('axios');
 const uuid = require('uuid');
 const qs = require('querystring');
 const dotenv = require('dotenv');
-const { KeyObject } = require('crypto');
+
+meta = () => {
+  const api = express.Router();
+  api.get('/', (req, res) => {
+    res.status(200).send(metadata);
+  });
+
+  return api;
+};
 
 dotenv.config();
 
@@ -19,6 +27,7 @@ app.use(express.json());
 
 // Middleware to parse URL-encoded request bodies
 app.use(express.urlencoded({ extended: true }));
+
 
 // Create a route for /.well-known/keys
 // Used by the relying party of IDP to provide an ES256 public key for client authentication
@@ -33,6 +42,8 @@ app.get('/jwks', async (req, res) => {
 
 // Start the Express server and listen on the specified port
 module.exports = Webtask.fromExpress(app);
+
+
 
 // Start the Express server and listen on the specified port
 app.post('/token', async (req, res) => {
