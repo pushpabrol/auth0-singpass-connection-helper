@@ -1,12 +1,12 @@
 {
-    "name": "auth0-singpass-connection-extension",
-    "version": "2.1.0",
-    "description": "Token endpoint for client assertion exchange",
+    "name": "auth0-singpass-connection-helper",
+    "version": "0.1.0",
+    "description": "Singpass token wrapper and other endpoints to support private key jwt / client assertion",
     "main": "index.js",
     "scripts": {
         "build": "npm run clean && npm run extension:build",
         "clean": "rimraf dist",
-        "extension:build": "a0-ext build:server ./index.js ./dist && cp ./dist/auth0-singpass-connection-extension.extension.$npm_package_version.js ./build/bundle.js"
+        "extension:build": "a0-ext build:server ./index.js ./dist && cp ./dist/auth0-singpass-connection-helper.extension.$npm_package_version.js ./build/bundle.js"
     },
     "keywords": [
         "auth0",
