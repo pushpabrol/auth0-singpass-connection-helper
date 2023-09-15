@@ -22,6 +22,8 @@ app.use(express.json());
 // Middleware to parse URL-encoded request bodies
 app.use(express.urlencoded({ extended: true }));
 
+app.options('*', cors())
+
 app.use('/.extensions', require('./hooks'));
 
 // Create a route for /.well-known/keys
