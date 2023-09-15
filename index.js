@@ -36,7 +36,7 @@ app.get('/jwks', async (req, res) => {
 });
 
 app.get('/meta', cors(), async (req, res) => {
-  res.status(200).send(metadata)
+  res.status(200).json(metadata)
 });
 
 // Start the Express server and listen on the specified port
