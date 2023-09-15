@@ -136,9 +136,11 @@ app.post('/token', async (req, res) => {
   // Function to load the RS256 private key
   async function loadRS256PrivateKey(context) {
     try {
-      //var privateKey = context.INTERMEDIARY_PRIVATE_KEY.replace(/\n/g, "\r\n");
+      const privateKeyFromSecrets = context.INTERMEDIARY_PRIVATE_KEY.replace(/\n/g, "\r\n");
+      console.log("from secrets:", privateKeyFromSecrets);
       var privateKey = "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC/s+Jg6d1vXEjS\n8Vpe1DslbrqWtFt4WuPSEUvfNgQyCxyMGDkp8bYS3BqTxbjUBDPZ5YA6EO1fjZrx\nNvsPnXG4SkUcGgSo6gsHU2xTknW/W7EUZQZPSD+8xM3sxTEFTN2CGIjVrdO6BmxO\ndANdPhHSaxBTWEKLvJeg8RMH4BBv/SuJ8FgreSDB4ZnmEU6+S7L59mKEkas0SgC3\nf/Xt0SLy4CiqIAA3hc+nPgyZiLME2NjTKQUrCj5JZ254d7oWfAmR5Zg3M80WMG9q\nIc/tJjI+w9ypX9zdLWNQez156rnUaIpG6jMtFTaS0M/3j/5+irB9jRqKTbEqRhw3\nsrj8yzg3AgMBAAECggEAK3kRp0ShsLVO1ndhNQwP9acsrSxtadfCvkqp2A6Z2Pdo\nG+UKYZas4Y4EgOpfxcTGNW20LHbWPcsRDg6X1Kyxs0c0cPD9iYi5w4mJkVIvXZvf\nhm56hdQukBJZWI5HVZpeyTfjIAHxd8gpG4l3kdeXlw4sf5oOTT4RbK/+ztRjJeHx\nUxqnzYgXGUWY0wM9rRsJzj3vL/zi4L3Xx47GFQGgbVAnBO+wg7wwDEKgiVEStP9P\nTbXUX8wuIX8t9DVRlMOcPjksDBULepKjeK3ljkORAEuIzjeSYYxwvSQmGIdotwcE\n9+KXL/nlGo4hMhEULGSzWHtCFeLvHvWQKP91brMl4QKBgQDiraU1ZbJPyTmNHz6q\nPmYo0Oi+956yNAKVaAwDPwqN2d13PRzW4sMb0P54ZFXdxo0Jo1w7k2nGr1QUcjPF\nUdaNm7PzeA5w5m5yv5LfPGdePSv8h1ZlspST/b02QVDpKGKHTzym/d10V4cr2NYB\nVOgAODqRatP2utBlbTGS4rB2eQKBgQDYgAk3gicPO+QyzJv+GUqZ4dCIrkLh5DCJ\nBE6t0gX7DehVN9fmv6XNbP27EZVt5CyF9loRDHArTNDEy+J/+vQ4X4S7om4Xmkan\ne4KaWvHlZ++RJIubu7jGVsH3+36cyEb8IXlEnxf6GijiF7p3ktTjGVp739QKHuc+\nK8OhZZM4LwKBgAHDlCuMNQ0F5drBSX2NqsHajlUeHDAK05JSEvXbgbuE3IJXCWhq\nr1YCFFjffwOQzfwrN0aHaSVQq/jUwq5gaqkDcy0L3CDoyic+cmgmUi+bjkIS04tL\nDnjwWo6Xh4eo9stSxIgQJa8IF1cyAshT3tJRnbMP/8JFxeVkKiSYewMRAoGADy+j\n9d3OSZZE4n9RrdguUG7zhrLahCfSc7n2nuCthLesBVY+cbQduDQd9CI+ng+0Q81M\n8gcyUwc3WaaHg7yhptakY9j36fXrYNIcDiG0+Ad7WW370Pew9VCemHtunSa7O/JJ\nJFQYhXWSSpGphbup7SgZHblMkU0roUPGnCqY0gcCgYAu3PBaK22IMQwKpbVY5yHg\nz0mfNx8uMLPaUEVOUaiIXoLGc4RB48p+ZNnvArstWLmeFIeH48CQ2sGE0y3gAQZQ\nnQMH3YUwicCeSdqv8YIrrssLtsyjklEuBWQY1d4MOlbJYS+BeK2phjOPB8tQPkwV\niiCJHk5cUt1Nr+Z/ISmz/Q==\n-----END PRIVATE KEY-----\n".replace(/\n/g, "\r\n");
       var key = await importPKCS8(privateKey, context.INTERMEDIARY_SIGNING_ALG);
+      console.log("Loaded private key from hard coding:, ", privateKey);
       return key;
     } catch (e) {
       console.log(e);
