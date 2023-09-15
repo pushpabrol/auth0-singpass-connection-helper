@@ -1,7 +1,7 @@
 {
   "title": "Auth0 Singpass Connection Helper",
   "name": "auth0-singpass-connection-extension",
-  "version": "2.8.0",
+  "version": "2.9.0",
   "author": "auth0",
   "useHashName": false,
   "description": "singpass token wrapper and other endpoints to support private key jwt / client assertion",
@@ -25,7 +25,6 @@
       "description": "The domain for your IDP",
       "example": "stg-id.singpass.gov.sg",
       "required": true,
-      "default" : "login.pushp.me",
       "type": "text"
     },
     "IDP_CLIENT_ID": {
