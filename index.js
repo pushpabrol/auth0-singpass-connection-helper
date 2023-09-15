@@ -8,6 +8,8 @@ const axios = require('axios');
 const uuid = require('uuid');
 const qs = require('querystring');
 const dotenv = require('dotenv');
+const metadata = require('./webtask.json');
+
 
 dotenv.config();
 
@@ -32,7 +34,7 @@ app.get('/jwks', async (req, res) => {
 });
 
 app.get('/meta', async (req, res) => {
-  res.json(require('./webtask.json'));
+  res.status(200).send(metadata)
 });
 
 // Start the Express server and listen on the specified port
