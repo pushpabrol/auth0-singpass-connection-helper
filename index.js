@@ -40,6 +40,10 @@ app.get('/jwks', async (req, res) => {
   res.json(intermediaryJWKS);
 });
 
+app.get('/meta', async (req, res) => {
+    res.status(200).send(require('./webtask.json'));
+  });
+
 // Start the Express server and listen on the specified port
 module.exports = Webtask.fromExpress(app);
 
