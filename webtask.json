@@ -1,7 +1,7 @@
 {
   "title": "Auth0 Singpass Connection Helper",
   "name": "auth0-singpass-connection-extension",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "author": "auth0",
   "useHashName": false,
   "description": "singpass token wrapper and other endpoints to support private key jwt / client assertion",
@@ -60,7 +60,6 @@
       "description": "Algorithm for RELYING_PARTY_PRIVATE_KEY_ENC",
       "type": "select",
       "allowMultiple": false,
-      "default": "ECDH-ES+A128KW",
       "options": [
         {
           "value": "ECDH-ES+A128KW",
@@ -72,7 +71,6 @@
       "description": "Algorithm for RELYING_PARTY_CLIENT_ASSERTION_SIGNING",
       "type": "select",
       "allowMultiple": false,
-      "default": "ES256",
       "options": [
         {
           "value": "ES256",
@@ -97,7 +95,6 @@
       "description": "Intermediary Signing key's Algorithm",
       "type": "select",
       "allowMultiple": false,
-      "default": "RS256",
       "required": true,
       "options": [
         {
