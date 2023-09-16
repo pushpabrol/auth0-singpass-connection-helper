@@ -1,6 +1,6 @@
 {
     "name": "auth0-singpass-connection-extension",
-    "version": "3.3.0",
+    "version": "3.4.0",
     "description": "Singpass token wrapper and other endpoints to support private key jwt / client assertion",
     "main": "index.js",
     "scripts": {
