@@ -99,12 +99,21 @@ async function updateConnectionTokenEndpoint(req){
     var connection = await req.auth0.getConnections({ name : "pushp" });
     console.log(connection.id)
     connection = await req.auth0.getConnection({ id : "con_GLdOAROQAA2XspgN" });
+    if(connection){
     console.log(connection.id);
     var options = connection.options;
-    if(options) options.token_endpoint = req.webtaskContext.data.PUBLIC_WT_URL + "/token";
-    if(options && options.oidc_metadata) options.oidc_metadata.token_endpoint = req.webtaskContext.data.PUBLIC_WT_URL + "/token";
+    if(options)  { 
+        options.token_endpoint = req.webtaskContext.data.PUBLIC_WT_URL + "/token";
+        options.jwks_uri = req.webtaskContext.data.PUBLIC_WT_URL + "/jwks";
+    }
+    if(options && options.oidc_metadata) {
+         options.oidc_metadata.token_endpoint = req.webtaskContext.data.PUBLIC_WT_URL + "/token";
+         options.oidc_metadata.jwks_uri = req.webtaskContext.data.PUBLIC_WT_URL + "/jwks";
+    }
     connection = await req.auth0.updateConnection({ id: connection.id }, { options: options });
     console.log("Updated connection!");
+    }
+    else console.log("Connection with that name not found. Skipping connection updates!");
     }
     catch(e){
         console.log(e);

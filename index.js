@@ -49,8 +49,6 @@ app.get('/', async (req, res) => {
 // Start the Express server and listen on the specified port
 module.exports = Webtask.fromExpress(app);
 
-
-
 // Start the Express server and listen on the specified port
 app.post('/token', async (req, res) => {
     const context = req.webtaskContext ? req.webtaskContext.data : process.env;
