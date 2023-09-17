@@ -93,6 +93,7 @@ function getToken(req, cb) {
 
 async function updateConnectionTokenEndpoint(req){
     try {
+        console.log(req.webtaskContext);
     var connection = await req.auth0.getConnections({ name : req.webtaskContext.data.AUTH0_CONNECTION_NAME });
     console.log(connection.id);
     var options = connection.options;
