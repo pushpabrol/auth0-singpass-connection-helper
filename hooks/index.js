@@ -121,8 +121,8 @@ async function updateConnectionTokenEndpoint(req, action){
             options.jwks_uri = "https://" + req.webtaskContext.data.IDP_DOMAIN + "/jwks";
         }
         if(options && options.oidc_metadata) {
-             options.oidc_metadata.token_endpoint = req.webtaskContext.data.PUBLIC_WT_URL + "/token";
-             options.oidc_metadata.jwks_uri = req.webtaskContext.data.PUBLIC_WT_URL + "/jwks";
+             options.oidc_metadata.token_endpoint = req.webtaskContext.data.IDP_DOMAIN + "/token";
+             options.oidc_metadata.jwks_uri = req.webtaskContext.data.IDP_DOMAIN + "/jwks";
         }
       
     }
