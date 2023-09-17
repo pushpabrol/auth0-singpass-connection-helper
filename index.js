@@ -46,12 +46,12 @@ app.get('/', async (req, res) => {
   res.json({
     "token": {
         "url" : `${req.webtaskContext.data.PUBLIC_WT_URL}/token`,
-        "use" :  "Used by the Auth0 connection as a token wrapper"
+        "use" :  "Endpoint used by the Auth0 connection as a token wrapper"
     } ,
 
     "jwks" : { 
         "url" : `${req.webtaskContext.data.PUBLIC_WT_URL}/jwks`,
-        "use" : "Used by Auth0 for token signature verification. This is used instead of the jwks of the IDP"
+        "use" : "Since this wrapper issues its own token for auth0 after verifying with the IDP, this endpoint allows for token signature verification public key that is used as the jwks url"
     },
  "keys" : {
     "url": `${req.webtaskContext.data.PUBLIC_WT_URL}/.well-known/keys`,
