@@ -41,6 +41,11 @@ app.get('/meta', async (req, res) => {
   res.status(200).send(metadata)
 });
 
+app.get('/', async (req, res) => {
+   
+  res.json({"jwks": req.webtaskContext.data.PUBLIC_WT_URL});
+});
+
 // Start the Express server and listen on the specified port
 module.exports = Webtask.fromExpress(app);
 

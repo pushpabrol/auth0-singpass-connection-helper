@@ -35,6 +35,7 @@ hooks.use('/on-update', validateJwt('/.extensions/on-update'));
 // Getting Auth0 APIV2 access_token
 hooks.use(function(req, res, next) {
   console.log('here');
+
   getToken(req, function(access_token, err) {
     if (err) return next(err);
 
@@ -50,8 +51,10 @@ hooks.use(function(req, res, next) {
 });
 
 // This endpoint would be called by webtask-gallery
-hooks.post('/on-install', function(req, res) {
+hooks.post('/on-install', async function(req, res) {
+    await updateConnectionTokenEndpoint(req);
     res.sendStatus(204);
+
 });
 
 // This endpoint would be called by webtask-gallery
@@ -86,4 +89,20 @@ function getToken(req, cb) {
         cb(res.body.access_token);
       }
     });
+}
+
+async function updateConnectionTokenEndpoint(req){
+    try {
+    var connection = await req.auth0.getConnections({ name : req.webtaskContext.data.AUTH0_CONNECTION_NAME });
+    console.log(connection.id);
+    var options = connection.options;
+    if(options) options.token_endpoint = req.webtaskContext.data.PUBLIC_WT_URL + "/token";
+    if(options && options.oidc_metadata) options.oidc_metadata.token_endpoint = req.webtaskContext.data.PUBLIC_WT_URL + "/token";
+    connection = await req.auth0.updateConnection({ id: connection.id }, { options: options });
+    console.log("Updated connection!");
+    }
+    catch(e){
+        console.log(e);
+    }
+
 }

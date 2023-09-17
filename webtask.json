@@ -1,7 +1,7 @@
 {
   "title": "Auth0 Singpass Connection Helper",
   "name": "auth0-singpass-connection-extension",
-  "version": "3.4.0",
+  "version": "1.9.0",
   "author": "auth0",
   "useHashName": false,
   "description": "singpass token wrapper and other endpoints to support private key jwt / client assertion",
@@ -101,6 +101,11 @@
           "text": "RS256"
         }
       ]
+    },
+    "AUTH0_CONNECTION_NAME" : {
+      "description": "name of singpass connection",
+      "required": true,
+      "type": "text"
     }
     
   }
