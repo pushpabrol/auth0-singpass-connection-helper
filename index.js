@@ -43,7 +43,9 @@ app.get('/meta', async (req, res) => {
 
 app.get('/', async (req, res) => {
    
-  res.json({"jwks": req.webtaskContext.data.PUBLIC_WT_URL});
+  res.json({"tokenURL": `${req.webtaskContext.data.PUBLIC_WT_URL}/token`, 
+"jwks" : `${req.webtaskContext.data.PUBLIC_WT_URL}/jwks`,
+ "keys" : `${req.webtaskContext.data.PUBLIC_WT_URL}/.well-known/keys`});
 });
 
 // Start the Express server and listen on the specified port
