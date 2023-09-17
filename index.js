@@ -55,7 +55,7 @@ app.get('/', async (req, res) => {
     },
  "keys" : {
     "url": `${req.webtaskContext.data.PUBLIC_WT_URL}/.well-known/keys`,
-    "use" : "Used by the IDP for client assertion validation"
+    "use" : "Used by the IDP for client assertion validation & JWE. Key with alg: ES256 is used for client assertion validation & Key with alg: ECDH-ES+A128KW is used for token encryption"
  }
 });
 });
