@@ -43,9 +43,21 @@ app.get('/meta', async (req, res) => {
 
 app.get('/', async (req, res) => {
    
-  res.json({"tokenURL": `${req.webtaskContext.data.PUBLIC_WT_URL}/token`, 
-"jwks" : `${req.webtaskContext.data.PUBLIC_WT_URL}/jwks`,
- "keys" : `${req.webtaskContext.data.PUBLIC_WT_URL}/.well-known/keys`});
+  res.json({
+    "token": {
+        "url" : `${req.webtaskContext.data.PUBLIC_WT_URL}/token`,
+        "use" :  "Used by the Auth0 connection as a token wrapper"
+    } ,
+
+    "jwks" : { 
+        "url" : `${req.webtaskContext.data.PUBLIC_WT_URL}/jwks`,
+        "use" : "Used by Auth0 for token signature verification. This is used instead of the jwks of the IDP"
+    },
+ "keys" : {
+    "url": `${req.webtaskContext.data.PUBLIC_WT_URL}/.well-known/keys`,
+    "use" : "Used by the IDP for client assertion validation"
+ }
+});
 });
 
 // Start the Express server and listen on the specified port
