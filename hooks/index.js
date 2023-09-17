@@ -52,7 +52,7 @@ hooks.use(function(req, res, next) {
 
 // This endpoint would be called by webtask-gallery
 hooks.post('/on-install', async function(req, res) {
-    await updateConnectionTokenEndpoint(req);
+    await updateConnectionTokenEndpoint(req,"install");
     res.sendStatus(204);
 
 });
@@ -63,7 +63,8 @@ hooks.put('/on-update', function(req, res) {
 });
 
 // This endpoint would be called by webtask-gallery
-hooks.delete('/on-uninstall', function(req, res) {
+hooks.delete('/on-uninstall', async function(req, res) {
+    await updateConnectionTokenEndpoint(req,"uninstall");
     res.sendStatus(204);
 });
 
@@ -91,7 +92,7 @@ function getToken(req, cb) {
     });
 }
 
-async function updateConnectionTokenEndpoint(req){
+async function updateConnectionTokenEndpoint(req, action){
     try {
         console.log(req.webtaskContext.data);
         console.log(req.webtaskContext.secrets);
@@ -100,6 +101,7 @@ async function updateConnectionTokenEndpoint(req){
     console.log(connection.id)
     connection = await req.auth0.getConnection({ id : "con_GLdOAROQAA2XspgN" });
     if(connection){
+    if(action === "install") {    
     console.log(connection.id);
     var options = connection.options;
     if(options)  { 
@@ -110,8 +112,22 @@ async function updateConnectionTokenEndpoint(req){
          options.oidc_metadata.token_endpoint = req.webtaskContext.data.PUBLIC_WT_URL + "/token";
          options.oidc_metadata.jwks_uri = req.webtaskContext.data.PUBLIC_WT_URL + "/jwks";
     }
+    }
+    if(action === "uninstall"){
+        console.log(connection.id);
+        var options = connection.options;
+        if(options)  { 
+            options.token_endpoint = "https://" + req.webtaskContext.data.IDP_DOMAIN + "/token";
+            options.jwks_uri = "https://" + req.webtaskContext.data.IDP_DOMAIN + "/jwks";
+        }
+        if(options && options.oidc_metadata) {
+             options.oidc_metadata.token_endpoint = req.webtaskContext.data.PUBLIC_WT_URL + "/token";
+             options.oidc_metadata.jwks_uri = req.webtaskContext.data.PUBLIC_WT_URL + "/jwks";
+        }
+      
+    }
     connection = await req.auth0.updateConnection({ id: connection.id }, { options: options });
-    console.log("Updated connection!");
+    console.log("Updated connection!: " + action);
     }
     else console.log("Connection with that name not found. Skipping connection updates!");
     }
