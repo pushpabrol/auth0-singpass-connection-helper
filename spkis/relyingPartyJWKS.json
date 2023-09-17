@@ -4,6 +4,7 @@
             "kty": "EC",
             "kid": "Al93ssyWpZ2yOoLxbDohuTigc1i5XNt1PKMyvU8aVgY",
             "use": "sig",
+            "alg": "ES256",
             "crv": "P-256",
             "x": "6-l6udWD4kVDnoa8xDYNf9GHJXQXTNPEU8qfkiFHCBE",
             "y": "TTXy1kprqhMA7bRy9v14C741tkOXkU36OtOuTKx6X80"
