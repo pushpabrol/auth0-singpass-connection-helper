@@ -99,7 +99,7 @@ async function updateConnectionTokenEndpoint(req, action){
 
     var connections = await req.auth0.getConnections({ name : req.webtaskContext.data.AUTH0_CONNECTION_NAME });
     if(connections.length === 1){
-    const connection = connections[0];
+    var connection = connections[0];
     if(action === "install") {    
     console.log(connection.id);
     var options = connection.options;
