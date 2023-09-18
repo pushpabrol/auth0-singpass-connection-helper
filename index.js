@@ -51,11 +51,11 @@ app.get('/', async (req, res) => {
 
     "jwks" : { 
         "url" : `${req.webtaskContext.data.PUBLIC_WT_URL}/jwks`,
-        "use" : "Since this wrapper issues its own token for auth0 after verifying with the IDP, this endpoint allows for token signature verification public key that is used as the jwks url"
+        "use" : "Since this wrapper issues its own token for auth0 after verifying with the IDP, this JSON Web Keys(jwks) is used by the connection."
     },
  "keys" : {
     "url": `${req.webtaskContext.data.PUBLIC_WT_URL}/.well-known/keys`,
-    "use" : "Used by the IDP for client assertion validation & JWE. Key with alg: ES256 is used for client assertion validation & Key with alg: ECDH-ES+A128KW is used for token encryption"
+    "use" : "JSON Web keys(JWKS) used by the IDP for client assertion validation & JWE. Key with alg: ES256 is used for client assertion validation & Key with alg: ECDH-ES+A128KW is used for token encryption"
  }
 });
 });
