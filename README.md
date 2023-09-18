@@ -1,24 +1,37 @@
-# Auth0 - Singpass Extesion
+# Auth0 - Singpass OIDC Connection Extesion
 
 [![Auth0 Extensions](http://cdn.auth0.com/extensions/assets/badge.svg)]()
 
-This extension will expose endpoints you can use from your custom social connection to support Singpass token endpoint with client-assertion.
+This extension will expose endpoints you can use from your OIDC connection to support Singpass token endpoint with client-assertion & JWE
 
 
 ## Usage
 
-Once the webtask has been deployed you will need the following endpoints to complete the setup for the custom social connection
+Once the webtask has been deployed the OIDC connection you have will be updated to use the  token endpoint and the jwks_uri exposed by this extension
 
 You can use the following url to get the below values
+
 ```
-https://{TENANT}.{region}12.webtask.io/auth0-singpass-extension/.well-known/openid-configuration
+https://{TENANT}.{region}12.webtask.io/auth0-singpass-connection-extension
+```
+```
+{
+  "token": {
+    "url": "https://pse-addons.us.webtask.io/auth0-singpass-connection-extension/token",
+    "use": "Endpoint used by the Auth0 connection as a token wrapper"
+  },
+  "jwks": {
+    "url": "https://pse-addons.us.webtask.io/auth0-singpass-connection-extension/jwks",
+    "use": "Since this wrapper issues its own token for auth0 after verifying with the IDP, this JSON Web Keys(jwks) is used by the connection."
+  },
+  "keys": {
+    "url": "https://pse-addons.us.webtask.io/auth0-singpass-connection-extension/.well-known/keys",
+    "use": "JSON Web keys(JWKS) used by the IDP for client assertion validation & JWE. Key with alg: ES256 is used for client assertion validation & Key with alg: ECDH-ES+A128KW is used for token encryption"
+  }
+}
 ```
 
-For Custom Social Connection
-```
-authorizeUrl = 'https://{TENANT}.{region}12.webtask.io/auth0-singpass-extension/authorize'
-tokenURL = 'https://{TENANT}.{region}12.webtask.io/auth0-singpass-extension/token'
-```
+Share the **https://pse-addons.us.webtask.io/auth0-singpass-connection-extension/.well-known/keys** url with the signpass IDP for use for client assertion and encryption
 
 
 ## What is Auth0?
