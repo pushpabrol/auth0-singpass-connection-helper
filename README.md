@@ -12,26 +12,26 @@ Once the webtask has been deployed the OIDC connection you have will be updated 
 You can use the following url to get the below values
 
 ```
-https://{TENANT}.{region}12.webtask.io/auth0-singpass-connection-extension
+https://{TENANT}.{region}.webtask.io/auth0-singpass-connection-extension
 ```
 ```
 {
   "token": {
-    "url": "https://pse-addons.us.webtask.io/auth0-singpass-connection-extension/token",
+    "url": "https://{TENANT}.{region}.webtask.io/auth0-singpass-connection-extension/token",
     "use": "Endpoint used by the Auth0 connection as a token wrapper"
   },
   "jwks": {
-    "url": "https://pse-addons.us.webtask.io/auth0-singpass-connection-extension/jwks",
+    "url": "https://{TENANT}.{region}.webtask.io/auth0-singpass-connection-extension/jwks",
     "use": "Since this wrapper issues its own token for auth0 after verifying with the IDP, this JSON Web Keys(jwks) is used by the connection."
   },
   "keys": {
-    "url": "https://pse-addons.us.webtask.io/auth0-singpass-connection-extension/.well-known/keys",
+    "url": "https://{TENANT}.{region}.webtask.io/auth0-singpass-connection-extension/.well-known/keys",
     "use": "JSON Web keys(JWKS) used by the IDP for client assertion validation & JWE. Key with alg: ES256 is used for client assertion validation & Key with alg: ECDH-ES+A128KW is used for token encryption"
   }
 }
 ```
 
-Share the **https://pse-addons.us.webtask.io/auth0-singpass-connection-extension/.well-known/keys** url with the signpass IDP for use for client assertion and encryption
+Share the **https://{TENANT}.{region}.webtask.io/auth0-singpass-connection-extension/.well-known/keys** url with the signpass IDP for use for client assertion and encryption
 
 
 ## What is Auth0?
