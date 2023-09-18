@@ -4,6 +4,8 @@
 
 This extension will expose endpoints you can use from your OIDC connection to support Singpass token endpoint with client-assertion & JWE
 
+if you already have an OIDC connection setup against Singpass, this extension will modify the Auth0 OIDC connection to allow it to function with Singpass!. This extension updates the token endpoint and the jwks_uri within the OIDC Connection to use endpoints from this extension and exposes the jwks url to be shared with Singpass!
+
 
 ## Usage
 
