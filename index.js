@@ -86,7 +86,7 @@ app.post('/token', async (req, res) => {
         // Prepare the request to exchange the authorization code for tokens
         const options = {
           method: 'POST',
-          url: `https://${context.IDP_DOMAIN}/token`,
+          url: `https://${context.IDP_DOMAIN}${context.IDP_TOKEN_PATH}`,
           headers: { 'content-type': 'application/x-www-form-urlencoded' },
           data: qs.stringify({
             grant_type: 'authorization_code',
@@ -109,7 +109,7 @@ app.post('/token', async (req, res) => {
         // Extract the id_token from the response
         const decryted_id_token = await decryptJWE(id_token, context);
   
-        const publicKeyIDP = createRemoteJWKSet(new URL(`https://${context.IDP_DOMAIN}/jwks`))
+        const publicKeyIDP = createRemoteJWKSet(new URL(`https://${context.IDP_DOMAIN}${context.IDP_JWKS_PATH}`))
   
         // Verify the id_token with the public key
         const { payload, protectedHeader } = await jwtVerify(decryted_id_token, publicKeyIDP, {
@@ -164,7 +164,6 @@ app.post('/token', async (req, res) => {
     try {
       const privateKeyFromSecrets = context.INTERMEDIARY_PRIVATE_KEY.replace(/\\n/gm, '\n');
       console.log("from secrets:", privateKeyFromSecrets);
-      //var privateKey = "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC/s+Jg6d1vXEjS\n8Vpe1DslbrqWtFt4WuPSEUvfNgQyCxyMGDkp8bYS3BqTxbjUBDPZ5YA6EO1fjZrx\nNvsPnXG4SkUcGgSo6gsHU2xTknW/W7EUZQZPSD+8xM3sxTEFTN2CGIjVrdO6BmxO\ndANdPhHSaxBTWEKLvJeg8RMH4BBv/SuJ8FgreSDB4ZnmEU6+S7L59mKEkas0SgC3\nf/Xt0SLy4CiqIAA3hc+nPgyZiLME2NjTKQUrCj5JZ254d7oWfAmR5Zg3M80WMG9q\nIc/tJjI+w9ypX9zdLWNQez156rnUaIpG6jMtFTaS0M/3j/5+irB9jRqKTbEqRhw3\nsrj8yzg3AgMBAAECggEAK3kRp0ShsLVO1ndhNQwP9acsrSxtadfCvkqp2A6Z2Pdo\nG+UKYZas4Y4EgOpfxcTGNW20LHbWPcsRDg6X1Kyxs0c0cPD9iYi5w4mJkVIvXZvf\nhm56hdQukBJZWI5HVZpeyTfjIAHxd8gpG4l3kdeXlw4sf5oOTT4RbK/+ztRjJeHx\nUxqnzYgXGUWY0wM9rRsJzj3vL/zi4L3Xx47GFQGgbVAnBO+wg7wwDEKgiVEStP9P\nTbXUX8wuIX8t9DVRlMOcPjksDBULepKjeK3ljkORAEuIzjeSYYxwvSQmGIdotwcE\n9+KXL/nlGo4hMhEULGSzWHtCFeLvHvWQKP91brMl4QKBgQDiraU1ZbJPyTmNHz6q\nPmYo0Oi+956yNAKVaAwDPwqN2d13PRzW4sMb0P54ZFXdxo0Jo1w7k2nGr1QUcjPF\nUdaNm7PzeA5w5m5yv5LfPGdePSv8h1ZlspST/b02QVDpKGKHTzym/d10V4cr2NYB\nVOgAODqRatP2utBlbTGS4rB2eQKBgQDYgAk3gicPO+QyzJv+GUqZ4dCIrkLh5DCJ\nBE6t0gX7DehVN9fmv6XNbP27EZVt5CyF9loRDHArTNDEy+J/+vQ4X4S7om4Xmkan\ne4KaWvHlZ++RJIubu7jGVsH3+36cyEb8IXlEnxf6GijiF7p3ktTjGVp739QKHuc+\nK8OhZZM4LwKBgAHDlCuMNQ0F5drBSX2NqsHajlUeHDAK05JSEvXbgbuE3IJXCWhq\nr1YCFFjffwOQzfwrN0aHaSVQq/jUwq5gaqkDcy0L3CDoyic+cmgmUi+bjkIS04tL\nDnjwWo6Xh4eo9stSxIgQJa8IF1cyAshT3tJRnbMP/8JFxeVkKiSYewMRAoGADy+j\n9d3OSZZE4n9RrdguUG7zhrLahCfSc7n2nuCthLesBVY+cbQduDQd9CI+ng+0Q81M\n8gcyUwc3WaaHg7yhptakY9j36fXrYNIcDiG0+Ad7WW370Pew9VCemHtunSa7O/JJ\nJFQYhXWSSpGphbup7SgZHblMkU0roUPGnCqY0gcCgYAu3PBaK22IMQwKpbVY5yHg\nz0mfNx8uMLPaUEVOUaiIXoLGc4RB48p+ZNnvArstWLmeFIeH48CQ2sGE0y3gAQZQ\nnQMH3YUwicCeSdqv8YIrrssLtsyjklEuBWQY1d4MOlbJYS+BeK2phjOPB8tQPkwV\niiCJHk5cUt1Nr+Z/ISmz/Q==\n-----END PRIVATE KEY-----\n".replace(/\n/g, "\r\n");
       var key = await importPKCS8(privateKeyFromSecrets, context.INTERMEDIARY_SIGNING_ALG);
       //console.log("Loaded private key from hard coding:, ", privateKey);
       return key;
@@ -203,21 +202,7 @@ app.post('/token', async (req, res) => {
     if (payload.nonce) delete payload.nonce;
     try {
       const key = await loadRS256PrivateKey(context);
-      //const key = "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC/s+Jg6d1vXEjS\n8Vpe1DslbrqWtFt4WuPSEUvfNgQyCxyMGDkp8bYS3BqTxbjUBDPZ5YA6EO1fjZrx\nNvsPnXG4SkUcGgSo6gsHU2xTknW/W7EUZQZPSD+8xM3sxTEFTN2CGIjVrdO6BmxO\ndANdPhHSaxBTWEKLvJeg8RMH4BBv/SuJ8FgreSDB4ZnmEU6+S7L59mKEkas0SgC3\nf/Xt0SLy4CiqIAA3hc+nPgyZiLME2NjTKQUrCj5JZ254d7oWfAmR5Zg3M80WMG9q\nIc/tJjI+w9ypX9zdLWNQez156rnUaIpG6jMtFTaS0M/3j/5+irB9jRqKTbEqRhw3\nsrj8yzg3AgMBAAECggEAK3kRp0ShsLVO1ndhNQwP9acsrSxtadfCvkqp2A6Z2Pdo\nG+UKYZas4Y4EgOpfxcTGNW20LHbWPcsRDg6X1Kyxs0c0cPD9iYi5w4mJkVIvXZvf\nhm56hdQukBJZWI5HVZpeyTfjIAHxd8gpG4l3kdeXlw4sf5oOTT4RbK/+ztRjJeHx\nUxqnzYgXGUWY0wM9rRsJzj3vL/zi4L3Xx47GFQGgbVAnBO+wg7wwDEKgiVEStP9P\nTbXUX8wuIX8t9DVRlMOcPjksDBULepKjeK3ljkORAEuIzjeSYYxwvSQmGIdotwcE\n9+KXL/nlGo4hMhEULGSzWHtCFeLvHvWQKP91brMl4QKBgQDiraU1ZbJPyTmNHz6q\nPmYo0Oi+956yNAKVaAwDPwqN2d13PRzW4sMb0P54ZFXdxo0Jo1w7k2nGr1QUcjPF\nUdaNm7PzeA5w5m5yv5LfPGdePSv8h1ZlspST/b02QVDpKGKHTzym/d10V4cr2NYB\nVOgAODqRatP2utBlbTGS4rB2eQKBgQDYgAk3gicPO+QyzJv+GUqZ4dCIrkLh5DCJ\nBE6t0gX7DehVN9fmv6XNbP27EZVt5CyF9loRDHArTNDEy+J/+vQ4X4S7om4Xmkan\ne4KaWvHlZ++RJIubu7jGVsH3+36cyEb8IXlEnxf6GijiF7p3ktTjGVp739QKHuc+\nK8OhZZM4LwKBgAHDlCuMNQ0F5drBSX2NqsHajlUeHDAK05JSEvXbgbuE3IJXCWhq\nr1YCFFjffwOQzfwrN0aHaSVQq/jUwq5gaqkDcy0L3CDoyic+cmgmUi+bjkIS04tL\nDnjwWo6Xh4eo9stSxIgQJa8IF1cyAshT3tJRnbMP/8JFxeVkKiSYewMRAoGADy+j\n9d3OSZZE4n9RrdguUG7zhrLahCfSc7n2nuCthLesBVY+cbQduDQd9CI+ng+0Q81M\n8gcyUwc3WaaHg7yhptakY9j36fXrYNIcDiG0+Ad7WW370Pew9VCemHtunSa7O/JJ\nJFQYhXWSSpGphbup7SgZHblMkU0roUPGnCqY0gcCgYAu3PBaK22IMQwKpbVY5yHg\nz0mfNx8uMLPaUEVOUaiIXoLGc4RB48p+ZNnvArstWLmeFIeH48CQ2sGE0y3gAQZQ\nnQMH3YUwicCeSdqv8YIrrssLtsyjklEuBWQY1d4MOlbJYS+BeK2phjOPB8tQPkwV\niiCJHk5cUt1Nr+Z/ISmz/Q==\n-----END PRIVATE KEY-----\n".replace(/\n/g, "\r\n");
-    //   var key = await importJWK({
-    //     "kty": "RSA",
-    //     "kid": "QVBKtPRpC9s2cynBuEI7DMjXwtinIkdMQ-ZMUX2BKZg",
-    //     "n": "v7PiYOndb1xI0vFaXtQ7JW66lrRbeFrj0hFL3zYEMgscjBg5KfG2Etwak8W41AQz2eWAOhDtX42a8Tb7D51xuEpFHBoEqOoLB1NsU5J1v1uxFGUGT0g_vMTN7MUxBUzdghiI1a3TugZsTnQDXT4R0msQU1hCi7yXoPETB-AQb_0rifBYK3kgweGZ5hFOvkuy-fZihJGrNEoAt3_17dEi8uAoqiAAN4XPpz4MmYizBNjY0ykFKwo-SWdueHe6FnwJkeWYNzPNFjBvaiHP7SYyPsPcqV_c3S1jUHs9eeq51GiKRuozLRU2ktDP94_-foqwfY0aik2xKkYcN7K4_Ms4Nw",
-    //     "e": "AQAB",
-    //     "d": "K3kRp0ShsLVO1ndhNQwP9acsrSxtadfCvkqp2A6Z2PdoG-UKYZas4Y4EgOpfxcTGNW20LHbWPcsRDg6X1Kyxs0c0cPD9iYi5w4mJkVIvXZvfhm56hdQukBJZWI5HVZpeyTfjIAHxd8gpG4l3kdeXlw4sf5oOTT4RbK_-ztRjJeHxUxqnzYgXGUWY0wM9rRsJzj3vL_zi4L3Xx47GFQGgbVAnBO-wg7wwDEKgiVEStP9PTbXUX8wuIX8t9DVRlMOcPjksDBULepKjeK3ljkORAEuIzjeSYYxwvSQmGIdotwcE9-KXL_nlGo4hMhEULGSzWHtCFeLvHvWQKP91brMl4Q",
-    //     "p": "4q2lNWWyT8k5jR8-qj5mKNDovveesjQClWgMAz8Kjdnddz0c1uLDG9D-eGRV3caNCaNcO5Npxq9UFHIzxVHWjZuz83gOcOZucr-S3zxnXj0r_IdWZbKUk_29NkFQ6Shih088pv3ddFeHK9jWAVToADg6kWrT9rrQZW0xkuKwdnk",
-    //     "q": "2IAJN4InDzvkMsyb_hlKmeHQiK5C4eQwiQROrdIF-w3oVTfX5r-lzWz9uxGVbeQshfZaEQxwK0zQxMvif_r0OF-Eu6JuF5pGp3uCmlrx5WfvkSSLm7u4xlbB9_t-nMhG_CF5RJ8X-hoo4he6d5LU4xlae9_UCh7nPivDoWWTOC8",
-    //     "dp": "AcOUK4w1DQXl2sFJfY2qwdqOVR4cMArTklIS9duBu4TcglcJaGqvVgIUWN9_A5DN_Cs3RodpJVCr-NTCrmBqqQNzLQvcIOjKJz5yaCZSL5uOQhLTi0sOePBajpeHh6j2y1LEiBAlrwgXVzICyFPe0lGdsw__wkXF5WQqJJh7AxE",
-    //     "dq": "Dy-j9d3OSZZE4n9RrdguUG7zhrLahCfSc7n2nuCthLesBVY-cbQduDQd9CI-ng-0Q81M8gcyUwc3WaaHg7yhptakY9j36fXrYNIcDiG0-Ad7WW370Pew9VCemHtunSa7O_JJJFQYhXWSSpGphbup7SgZHblMkU0roUPGnCqY0gc",
-    //     "qi": "LtzwWittiDEMCqW1WOch4M9JnzcfLjCz2lBFTlGoiF6CxnOEQePKfmTZ7wK7LVi5nhSHh-PAkNrBhNMt4AEGUJ0DB92FMInAnknar_GCK67LC7bMo5JRLgVkGNXeDDpWyWEvgXitqYYzjwfLUD5MFYogiR5OXFLdTa_mfyEps_0"
-    // },"RS256");
       console.log(key);
-
 
       const jwt = await new SignJWT(payload)
         .setProtectedHeader({ alg: context.INTERMEDIARY_SIGNING_ALG, kid: context.INTERMEDIARY_KEY_KID, typ: "JWT" })

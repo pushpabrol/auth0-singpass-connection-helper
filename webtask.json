@@ -1,7 +1,7 @@
 {
   "title": "Auth0 Singpass Connection Helper",
   "name": "auth0-singpass-connection-extension",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "auth0",
   "useHashName": false,
   "description": "singpass token wrapper and other endpoints to support private key jwt / client assertion",
@@ -107,6 +107,18 @@
     },
     "AUTH0_CONNECTION_NAME" : {
       "description": "name of singpass connection",
+      "required": true,
+      "type": "text"
+    },
+    "IDP_JWKS_PATH" : {
+      "description": "relative path of the JWKS endpoint for the IDP",
+      "default" :"/.well-known/keys",
+      "required": true,
+      "type": "text"
+    },
+    "IDP_TOKEN_PATH" : {
+      "description": "relative path of the token endpoint for the IDP",
+      "default" :"/token",
       "required": true,
       "type": "text"
     }
