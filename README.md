@@ -1,4 +1,4 @@
-# Auth0 - Singpass OIDC Connection Extesion
+# Auth0 - Singpass OIDC Connection Extension
 
 [![Auth0 Extensions](http://cdn.auth0.com/extensions/assets/badge.svg)]()
 
