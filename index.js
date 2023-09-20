@@ -185,7 +185,7 @@ app.post('/token', async (req, res) => {
         .setIssuedAt()
         .setIssuer(context.IDP_CLIENT_ID)
         .setSubject(context.IDP_CLIENT_ID)
-        .setAudience([`https://${context.IDP_DOMAIN}/`, `https://${context.IDP_DOMAIN}/token`])
+        .setAudience([`https://${context.IDP_DOMAIN}`, `https://${context.IDP_DOMAIN}/token`])
         .setExpirationTime('2m') // Expiration time
         .setJti(uuid.v4())
         .sign(key);
