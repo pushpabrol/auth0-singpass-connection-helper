@@ -1,7 +1,7 @@
 {
   "title": "Auth0 Singpass Connection Helper",
   "name": "auth0-singpass-connection-extension",
-  "version": "1.2.0",
+  "version": "1.0.0",
   "author": "auth0",
   "useHashName": false,
   "description": "singpass token wrapper and other endpoints to support private key jwt / client assertion",
@@ -121,6 +121,21 @@
       "default" :"/token",
       "required": true,
       "type": "text"
+    },"REMOVE_NONCE" : {
+      "description": "Should we keep the nonce or not!",
+      "type": "select",
+      "allowMultiple": false,
+      "default" : "N",
+      "options": [
+        {
+          "value": "N",
+          "text": "N"
+        },
+        {
+          "value": "Y",
+          "text": "Y"
+        }
+      ]
     }
     
   }
