@@ -121,9 +121,9 @@ app.post('/token', async (req, res) => {
         console.log(protectedHeader);
         // Remove the nonce from the payload and replace the id_token with a new RS256 token
         //if (payload.nonce) delete payload.nonce;
-        console.log(context.REMOVE_NONCE);
+        console.log("remove nonce: ", context.REMOVE_NONCE);
 
-        //if (context.REMOVE_NONCE == "Y" && payload.has) delete payload.nonce;
+        if (context.REMOVE_NONCE == "Y" && payload.nonce) delete payload.nonce;
 
         response.data.payload = payload;
         delete response.data.id_token;
@@ -203,7 +203,6 @@ app.post('/token', async (req, res) => {
   
   // Function to generate an RS256 token by the intermediary
   async function generateRS256Token(payload, context) {
-    if (payload.nonce) delete payload.nonce;
     try {
       const key = await loadRS256PrivateKey(context);
       console.log(key);
